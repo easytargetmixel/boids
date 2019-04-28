@@ -1,11 +1,9 @@
 class Boid {
-  // main fields
+
   private PVector pos;
   private PVector move;
   private float shade;
   private ArrayList<Boid> friends;
-
-  // timers
   private int thinkTimer = 0;
 
   Boid (float xx, float yy) {
@@ -15,36 +13,39 @@ class Boid {
     pos.y = yy;
     thinkTimer = int(random(10));
     shade = random(255);
-    friends = new ArrayList<Boid>();
+    updateFriends();
   }
 
   PVector getPosition() {
     return pos;
   }
-  
+
   float getX() {
     return pos.x;
   }
-  
+
   float getY() {
     return pos.y;
   }
-  
+
   float getHeading() {
     return move.heading();
   }
-  
+
   float getShade() {
     return shade;
   }
   
+  ArrayList<Boid> getFriends() {
+    return friends;
+  }
+
   void go () {
     increment();
     wrap();
 
     if (thinkTimer ==0 ) {
-      // update our friend array (lots of square roots)
-      getFriends();
+      updateFriends();
     }
     flock();
     pos.add(move);
@@ -59,10 +60,10 @@ class Boid {
 
     allign.mult(1);
     if (!option_friend) allign.mult(0);
-    
+
     avoidDir.mult(1);
     if (!option_crowd) avoidDir.mult(0);
-    
+
     avoidObjects.mult(3);
     if (!option_avoid) avoidObjects.mult(0);
 
@@ -71,7 +72,7 @@ class Boid {
 
     cohese.mult(1);
     if (!option_cohese) cohese.mult(0);
-    
+
     stroke(0, 255, 160);
 
     move.add(allign);
@@ -81,13 +82,13 @@ class Boid {
     move.add(cohese);
 
     move.limit(maxSpeed);
-    
+
     shade += getAverageColor() * 0.03;
     shade += (random(2) - 1) ;
     shade = (shade + 255) % 255; //max(0, min(255, shade));
   }
 
-   ArrayList<Boid> getFriends () {
+  void updateFriends () {
     final ArrayList<Boid> nearby = new ArrayList<Boid>();
     for (int i =0; i < boids.size(); i++) {
       Boid test = boids.get(i);
@@ -98,7 +99,6 @@ class Boid {
       }
     }
     friends = nearby;
-    return friends;
   }
 
   float getAverageColor () {
@@ -110,7 +110,7 @@ class Boid {
       } else if (other.shade - shade > 128) {
         total += other.shade - 255 - shade;
       } else {
-        total += other.shade - shade; 
+        total += other.shade - shade;
       }
       count++;
     }
@@ -179,9 +179,9 @@ class Boid {
     }
     return steer;
   }
-  
+
   PVector getCohesion () {
-   float neighbordist = 50;
+    float neighbordist = 50;
     PVector sum = new PVector(0, 0);   // Start with empty vector to accumulate all locations
     int count = 0;
     for (Boid other : friends) {
@@ -193,11 +193,10 @@ class Boid {
     }
     if (count > 0) {
       sum.div(count);
-      
+
       PVector desired = PVector.sub(sum, pos);  
       return desired.setMag(0.05);
-    } 
-    else {
+    } else {
       return new PVector(0, 0);
     }
   }
