@@ -1,7 +1,7 @@
-class Avoid {
+class Obstacle {
    private PVector position;
    
-   Avoid (final PVector position) {
+   Obstacle (final PVector position) {
      this.position = position;
    }
    

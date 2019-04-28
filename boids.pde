@@ -1,6 +1,6 @@
 Boid barry;
 ArrayList<Boid> boids;
-ArrayList<Avoid> avoids;
+ArrayList<Obstacle> avoids;
 
 private ObstacleDrawer obstacleDrawer = new ObstacleDrawer();
 
@@ -30,7 +30,7 @@ void setup () {
   textSize(16);
   recalculateConstants();
   boids = new ArrayList<Boid>();
-  avoids = new ArrayList<Avoid>();
+  avoids = new ArrayList<Obstacle>();
   for (int x = 100; x < width - 100; x+= 100) {
     for (int y = 100; y < height - 100; y+= 100) {
       //   boids.add(new Boid(x + random(3), y + random(3)));
@@ -52,24 +52,24 @@ void recalculateConstants () {
 
 
 void setupWalls() {
-  avoids = new ArrayList<Avoid>();
+  avoids = new ArrayList<Obstacle>();
   for (int x = 0; x < width; x+= 20) {
     final PVector upperObstaclePosition = new PVector(x, 10f);
-    avoids.add(new Avoid(upperObstaclePosition));
+    avoids.add(new Obstacle(upperObstaclePosition));
     final PVector lowerObstaclePosition = new PVector(x, height - 10f);
-    avoids.add(new Avoid(lowerObstaclePosition));
+    avoids.add(new Obstacle(lowerObstaclePosition));
   }
 }
 
 void setupCircle() {
-  avoids = new ArrayList<Avoid>();
+  avoids = new ArrayList<Obstacle>();
   for (int x = 0; x < 50; x+= 1) {
     float dir = (x / 50.0) * TWO_PI;
     final PVector obstaclePosition = new PVector(
       width * 0.5f + cos(dir) * height * 0.4f, 
       height * 0.5f + sin(dir) * height * 0.4f
       ); 
-    avoids.add(new Avoid(obstaclePosition));
+    avoids.add(new Obstacle(obstaclePosition));
   }
 }
 
@@ -99,7 +99,7 @@ void draw () {
     current.draw();
   }
 
-  for (final Avoid currentObstacle : avoids) {
+  for (final Obstacle currentObstacle : avoids) {
     obstacleDrawer.drawObstacle(currentObstacle);
   }
 
@@ -172,7 +172,7 @@ void mousePressed () {
     message(boids.size() + " Total Boid" + s(boids.size()));
     break;
   case "avoids":
-    avoids.add(new Avoid(mousePosition));
+    avoids.add(new Obstacle(mousePosition));
     break;
   }
 }
@@ -186,7 +186,7 @@ void erase () {
   }
 
   for (int i = avoids.size()-1; i > -1; i--) {
-    Avoid b = avoids.get(i);
+    Obstacle b = avoids.get(i);
     if (abs(b.getX() - mouseX) < eraseRadius && abs(b.getY() - mouseY) < eraseRadius) {
       avoids.remove(i);
     }
