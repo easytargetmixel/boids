@@ -2,6 +2,7 @@ Boid barry;
 ArrayList<Boid> boids;
 ArrayList<Obstacle> avoids;
 
+private BoidDrawer boidDrawer = new BoidDrawer();
 private ObstacleDrawer obstacleDrawer = new ObstacleDrawer();
 
 float globalScale = .91;
@@ -33,8 +34,8 @@ void setup () {
   avoids = new ArrayList<Obstacle>();
   for (int x = 100; x < width - 100; x+= 100) {
     for (int y = 100; y < height - 100; y+= 100) {
-      //   boids.add(new Boid(x + random(3), y + random(3)));
-      //    boids.add(new Boid(x + random(3), y + random(3)));
+         boids.add(new Boid(x + random(3), y + random(3)));
+          boids.add(new Boid(x + random(3), y + random(3)));
     }
   }
 
@@ -93,10 +94,9 @@ void draw () {
     fill(0, 200, 200);
     ellipse(mouseX, mouseY, 15, 15);
   }
-  for (int i = 0; i <boids.size(); i++) {
-    Boid current = boids.get(i);
-    current.go();
-    current.draw();
+  for (final Boid currentBoid : boids) {
+    currentBoid.go();
+    boidDrawer.drawBoid(currentBoid);
   }
 
   for (final Obstacle currentObstacle : avoids) {

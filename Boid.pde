@@ -1,13 +1,12 @@
 class Boid {
   // main fields
-  PVector pos;
-  PVector move;
-  float shade;
-  ArrayList<Boid> friends;
+  private PVector pos;
+  private PVector move;
+  private float shade;
+  private ArrayList<Boid> friends;
 
   // timers
-  int thinkTimer = 0;
-
+  private int thinkTimer = 0;
 
   Boid (float xx, float yy) {
     move = new PVector(0, 0);
@@ -19,6 +18,26 @@ class Boid {
     friends = new ArrayList<Boid>();
   }
 
+  PVector getPosition() {
+    return pos;
+  }
+  
+  float getX() {
+    return pos.x;
+  }
+  
+  float getY() {
+    return pos.y;
+  }
+  
+  float getHeading() {
+    return move.heading();
+  }
+  
+  float getShade() {
+    return shade;
+  }
+  
   void go () {
     increment();
     wrap();
@@ -68,8 +87,8 @@ class Boid {
     shade = (shade + 255) % 255; //max(0, min(255, shade));
   }
 
-  void getFriends () {
-    ArrayList<Boid> nearby = new ArrayList<Boid>();
+   ArrayList<Boid> getFriends () {
+    final ArrayList<Boid> nearby = new ArrayList<Boid>();
     for (int i =0; i < boids.size(); i++) {
       Boid test = boids.get(i);
       if (test == this) continue;
@@ -79,6 +98,7 @@ class Boid {
       }
     }
     friends = nearby;
+    return friends;
   }
 
   float getAverageColor () {
@@ -180,25 +200,6 @@ class Boid {
     else {
       return new PVector(0, 0);
     }
-  }
-
-  void draw () {
-    for ( int i = 0; i < friends.size(); i++) {
-      Boid f = friends.get(i);
-      stroke(90);
-      //line(this.pos.x, this.pos.y, f.pos.x, f.pos.y);
-    }
-    noStroke();
-    fill(shade, 90, 200);
-    pushMatrix();
-    translate(pos.x, pos.y);
-    rotate(move.heading());
-    beginShape();
-    vertex(15 * globalScale, 0);
-    vertex(-7* globalScale, 7* globalScale);
-    vertex(-7* globalScale, -7* globalScale);
-    endShape(CLOSE);
-    popMatrix();
   }
 
   // update all those timers!
