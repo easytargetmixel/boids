@@ -2,6 +2,8 @@ Boid barry;
 ArrayList<Boid> boids;
 ArrayList<Avoid> avoids;
 
+private ObstacleDrawer obstacleDrawer = new ObstacleDrawer();
+
 float globalScale = .91;
 float eraseRadius = 20;
 String tool = "boids";
@@ -31,11 +33,11 @@ void setup () {
   avoids = new ArrayList<Avoid>();
   for (int x = 100; x < width - 100; x+= 100) {
     for (int y = 100; y < height - 100; y+= 100) {
- //   boids.add(new Boid(x + random(3), y + random(3)));
-  //    boids.add(new Boid(x + random(3), y + random(3)));
+      //   boids.add(new Boid(x + random(3), y + random(3)));
+      //    boids.add(new Boid(x + random(3), y + random(3)));
     }
   }
-  
+
   setupWalls();
 }
 
@@ -51,18 +53,24 @@ void recalculateConstants () {
 
 void setupWalls() {
   avoids = new ArrayList<Avoid>();
-   for (int x = 0; x < width; x+= 20) {
-    avoids.add(new Avoid(x, 10));
-    avoids.add(new Avoid(x, height - 10));
-  } 
+  for (int x = 0; x < width; x+= 20) {
+    final PVector upperObstaclePosition = new PVector(x, 10f);
+    avoids.add(new Avoid(upperObstaclePosition));
+    final PVector lowerObstaclePosition = new PVector(x, height - 10f);
+    avoids.add(new Avoid(lowerObstaclePosition));
+  }
 }
 
 void setupCircle() {
   avoids = new ArrayList<Avoid>();
-   for (int x = 0; x < 50; x+= 1) {
-     float dir = (x / 50.0) * TWO_PI;
-    avoids.add(new Avoid(width * 0.5 + cos(dir) * height*.4, height * 0.5 + sin(dir)*height*.4));
-  } 
+  for (int x = 0; x < 50; x+= 1) {
+    float dir = (x / 50.0) * TWO_PI;
+    final PVector obstaclePosition = new PVector(
+      width * 0.5f + cos(dir) * height * 0.4f, 
+      height * 0.5f + sin(dir) * height * 0.4f
+      ); 
+    avoids.add(new Avoid(obstaclePosition));
+  }
 }
 
 
@@ -91,14 +99,12 @@ void draw () {
     current.draw();
   }
 
-  for (int i = 0; i <avoids.size(); i++) {
-    Avoid current = avoids.get(i);
-    current.go();
-    current.draw();
+  for (final Avoid currentObstacle : avoids) {
+    obstacleDrawer.drawObstacle(currentObstacle);
   }
 
   if (messageTimer > 0) {
-    messageTimer -= 1; 
+    messageTimer -= 1;
   }
   drawGUI();
 }
@@ -117,38 +123,37 @@ void keyPressed () {
     message("Decreased scale");
     globalScale *= 0.8;
   } else if (key == '=') {
-      message("Increased Scale");
+    message("Increased Scale");
     globalScale /= 0.8;
   } else if (key == '1') {
-     option_friend = option_friend ? false : true;
-     message("Turned friend allignment " + on(option_friend));
+    option_friend = option_friend ? false : true;
+    message("Turned friend allignment " + on(option_friend));
   } else if (key == '2') {
-     option_crowd = option_crowd ? false : true;
-     message("Turned crowding avoidance " + on(option_crowd));
+    option_crowd = option_crowd ? false : true;
+    message("Turned crowding avoidance " + on(option_crowd));
   } else if (key == '3') {
-     option_avoid = option_avoid ? false : true;
-     message("Turned obstacle avoidance " + on(option_avoid));
-  }else if (key == '4') {
-     option_cohese = option_cohese ? false : true;
-     message("Turned cohesion " + on(option_cohese));
-  }else if (key == '5') {
-     option_noise = option_noise ? false : true;
-     message("Turned noise " + on(option_noise));
+    option_avoid = option_avoid ? false : true;
+    message("Turned obstacle avoidance " + on(option_avoid));
+  } else if (key == '4') {
+    option_cohese = option_cohese ? false : true;
+    message("Turned cohesion " + on(option_cohese));
+  } else if (key == '5') {
+    option_noise = option_noise ? false : true;
+    message("Turned noise " + on(option_noise));
   } else if (key == ',') {
-     setupWalls(); 
+    setupWalls();
   } else if (key == '.') {
-     setupCircle(); 
+    setupCircle();
   }
   recalculateConstants();
-
 }
 
 void drawGUI() {
-   if(messageTimer > 0) {
-     fill((min(30, messageTimer) / 30.0) * 255.0);
+  if (messageTimer > 0) {
+    fill((min(30, messageTimer) / 30.0) * 255.0);
 
-    text(messageText, 10, height - 20); 
-   }
+    text(messageText, 10, height - 20);
+  }
 }
 
 String s(int count) {
@@ -156,17 +161,18 @@ String s(int count) {
 }
 
 String on(boolean in) {
-  return in ? "on" : "off"; 
+  return in ? "on" : "off";
 }
 
 void mousePressed () {
+  final PVector mousePosition = new PVector(mouseX, mouseY);
   switch (tool) {
   case "boids":
     boids.add(new Boid(mouseX, mouseY));
     message(boids.size() + " Total Boid" + s(boids.size()));
     break;
   case "avoids":
-    avoids.add(new Avoid(mouseX, mouseY));
+    avoids.add(new Avoid(mousePosition));
     break;
   }
 }
@@ -181,7 +187,7 @@ void erase () {
 
   for (int i = avoids.size()-1; i > -1; i--) {
     Avoid b = avoids.get(i);
-    if (abs(b.pos.x - mouseX) < eraseRadius && abs(b.pos.y - mouseY) < eraseRadius) {
+    if (abs(b.getX() - mouseX) < eraseRadius && abs(b.getY() - mouseY) < eraseRadius) {
       avoids.remove(i);
     }
   }
@@ -196,6 +202,6 @@ void drawText (String s, float x, float y) {
 
 
 void message (String in) {
-   messageText = in;
-   messageTimer = (int) frameRate * 3;
+  messageText = in;
+  messageTimer = (int) frameRate * 3;
 }

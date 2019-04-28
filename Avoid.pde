@@ -1,16 +1,19 @@
 class Avoid {
-   PVector pos;
+   private PVector position;
    
-   Avoid (float xx, float yy) {
-     pos = new PVector(xx,yy);
+   Avoid (final PVector position) {
+     this.position = position;
    }
    
-   void go () {
-     
+   PVector getPosition() {
+     return position;
    }
    
-   void draw () {
-     fill(0, 255, 200);
-     ellipse(pos.x, pos.y, 15, 15);
+   float getX() {
+     return position.x;
+   }
+   
+   float getY() {
+     return position.y;
    }
 }

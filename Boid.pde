@@ -146,7 +146,7 @@ class Boid {
     int count = 0;
 
     for (Avoid other : avoids) {
-      float d = PVector.dist(pos, other.pos);
+      float d = PVector.dist(pos, other.getPosition());
       // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
       if ((d > 0) && (d < avoidRadius)) {
         // Calculate vector pointing away from neighbor
