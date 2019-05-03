@@ -1,19 +1,13 @@
 class Boid {
 
   private PVector pos;
-  private PVector move;
-  private float shade;
-  private ArrayList<Boid> friends;
-  private int thinkTimer = 0;
+  private PVector move = new PVector(0f, 0f);
+  private float shade = random(255f);
+  private ArrayList<Boid> friends = new ArrayList<Boid>();
+  private int thinkTimer = int(random(10));
 
-  Boid (float xx, float yy) {
-    move = new PVector(0, 0);
-    pos = new PVector(0, 0);
-    pos.x = xx;
-    pos.y = yy;
-    thinkTimer = int(random(10));
-    shade = random(255);
-    updateFriends();
+  Boid (final float x, final float y) {
+    pos = new PVector(x, y);
   }
 
   PVector getPosition() {
@@ -40,21 +34,21 @@ class Boid {
     return friends;
   }
 
-  void go () {
+  void go(final ArrayList<Boid> allBoids, final ArrayList<Obstacle> obstacles) {
     increment();
     wrap();
 
     if (thinkTimer ==0 ) {
-      updateFriends();
+      updateFriends(allBoids);
     }
-    flock();
+    flock(obstacles);
     pos.add(move);
   }
 
-  void flock () {
+  void flock(final ArrayList<Obstacle> obstacles) {
     PVector allign = getAverageDir();
     PVector avoidDir = getAvoidDir(); 
-    PVector avoidObjects = getAvoidAvoids();
+    PVector avoidObjects = getAvoidAvoids(obstacles);
     PVector noise = new PVector(random(2) - 1, random(2) -1);
     PVector cohese = getCohesion();
 
@@ -88,16 +82,19 @@ class Boid {
     shade = (shade + 255) % 255; //max(0, min(255, shade));
   }
 
-  void updateFriends () {
+  void updateFriends(final ArrayList<Boid> allBoids) {
     final ArrayList<Boid> nearby = new ArrayList<Boid>();
-    for (int i =0; i < boids.size(); i++) {
-      Boid test = boids.get(i);
-      if (test == this) continue;
+    for (final Boid test : allBoids) {
+      if (test == this) {
+        continue;
+      }
+      
       if (abs(test.pos.x - this.pos.x) < friendRadius &&
         abs(test.pos.y - this.pos.y) < friendRadius) {
         nearby.add(test);
       }
     }
+    
     friends = nearby;
   }
 
@@ -161,7 +158,7 @@ class Boid {
     return steer;
   }
 
-  PVector getAvoidAvoids() {
+  PVector getAvoidAvoids(final ArrayList<Obstacle> obstacles) {
     PVector steer = new PVector(0, 0);
     int count = 0;
 

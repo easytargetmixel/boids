@@ -1,6 +1,7 @@
 private Environment environment;
 private BoidDrawer boidDrawer = new BoidDrawer();
 private ObstacleDrawer obstacleDrawer = new ObstacleDrawer();
+private MessageDisplay messageDisplay = new MessageDisplay();
 
 private float globalScale = .91f;
 private float eraseRadius = 20f;
@@ -17,9 +18,6 @@ private boolean option_crowd = true;
 private boolean option_avoid = true;
 private boolean option_noise = true;
 private boolean option_cohese = true;
-
-private int messageTimer = 0;
-private String messageText = "";
 
 void setup () {
   fullScreen();
@@ -47,19 +45,9 @@ void draw () {
     fill(0, 200, 200);
     ellipse(mouseX, mouseY, 15, 15);
   }
-  for (final Boid currentBoid : boids) {
-    currentBoid.go();
-    boidDrawer.drawBoid(currentBoid);
-  }
 
-  for (final Obstacle currentObstacle : obstacles) {
-    obstacleDrawer.drawObstacle(currentObstacle);
-  }
-
-  if (messageTimer > 0) {
-    messageTimer -= 1;
-  }
-  drawGUI();
+  environment.updateAndDraw();
+  messageDisplay.draw_();
 }
 
 void keyPressed () {
@@ -80,19 +68,19 @@ void keyPressed () {
     globalScale /= 0.8;
   } else if (key == '1') {
     option_friend = option_friend ? false : true;
-    message("Turned friend allignment " + on(option_friend));
+    message("Turned friend allignment ", option_friend);
   } else if (key == '2') {
     option_crowd = option_crowd ? false : true;
-    message("Turned crowding avoidance " + on(option_crowd));
+    message("Turned crowding avoidance ", option_crowd);
   } else if (key == '3') {
     option_avoid = option_avoid ? false : true;
-    message("Turned obstacle avoidance " + on(option_avoid));
+    message("Turned obstacle avoidance ", option_avoid);
   } else if (key == '4') {
     option_cohese = option_cohese ? false : true;
-    message("Turned cohesion " + on(option_cohese));
+    message("Turned cohesion ", option_cohese);
   } else if (key == '5') {
     option_noise = option_noise ? false : true;
-    message("Turned noise " + on(option_noise));
+    message("Turned noise ", option_noise);
   } else if (key == ',') {
     environment.setupWalls();
   } else if (key == '.') {
@@ -126,50 +114,26 @@ private void recalculateConstants () {
   coheseRadius = friendRadius;
 }
 
-private void drawGUI() {
-  if (messageTimer <= 0) {
-    return;
-  }
-  
-  fill((min(30f, messageTimer) / 30f) * 255f);
-  text(messageText, 10f, height - 20f);
-}
-
-String s(int count) {
-  return (count != 1) ? "s" : "";
-}
-
-String on(boolean in) {
-  return in ? "on" : "off";
-}
-
-
-
 void erase () {
-  for (int i = boids.size()-1; i > -1; i--) {
-    Boid b = boids.get(i);
-    if (abs(b.pos.x - mouseX) < eraseRadius && abs(b.pos.y - mouseY) < eraseRadius) {
-      boids.remove(i);
-    }
-  }
+  //for (int i = boids.size()-1; i > -1; i--) {
+  //  Boid b = boids.get(i);
+  //  if (abs(b.pos.x - mouseX) < eraseRadius && abs(b.pos.y - mouseY) < eraseRadius) {
+  //    boids.remove(i);
+  //  }
+  //}
 
-  for (int i = obstacles.size()-1; i > -1; i--) {
-    Obstacle b = obstacles.get(i);
-    if (abs(b.getX() - mouseX) < eraseRadius && abs(b.getY() - mouseY) < eraseRadius) {
-      obstacles.remove(i);
-    }
-  }
+  //for (int i = obstacles.size()-1; i > -1; i--) {
+  //  Obstacle b = obstacles.get(i);
+  //  if (abs(b.getX() - mouseX) < eraseRadius && abs(b.getY() - mouseY) < eraseRadius) {
+  //    obstacles.remove(i);
+  //  }
+  //}
 }
 
-void drawText (String s, float x, float y) {
-  fill(0);
-  text(s, x, y);
-  fill(200);
-  text(s, x-1, y-1);
+private void message(final String messageText) {
+  messageDisplay.showMessage(messageText);
 }
 
-
-void message (String in) {
-  messageText = in;
-  messageTimer = (int) frameRate * 3;
+private void message(final String prefixText, final boolean onOffValue) {
+  messageDisplay.showMessage(prefixText, onOffValue);
 }

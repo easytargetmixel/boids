@@ -10,7 +10,6 @@ class Environment {
         boids.add(new Boid(x + random(3), y + random(3)));
       }
     }
-
     setupWalls();
   }
 
@@ -33,6 +32,17 @@ class Environment {
         height * 0.5f + sin(dir) * height * 0.4f
         ); 
       obstacles.add(new Obstacle(obstaclePosition));
+    }
+  }
+
+  void updateAndDraw() {
+    for (final Boid currentBoid : boids) {
+      currentBoid.go(boids, obstacles);
+      boidDrawer.drawBoid(currentBoid);
+    }
+
+    for (final Obstacle currentObstacle : obstacles) {
+      obstacleDrawer.drawObstacle(currentObstacle);
     }
   }
 }
