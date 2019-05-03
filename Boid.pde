@@ -165,7 +165,7 @@ class Boid {
     PVector steer = new PVector(0, 0);
     int count = 0;
 
-    for (Obstacle other : avoids) {
+    for (Obstacle other : obstacles) {
       float d = PVector.dist(pos, other.getPosition());
       // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
       if ((d > 0) && (d < avoidRadius)) {

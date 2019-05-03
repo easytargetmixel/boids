@@ -1,84 +1,37 @@
-Boid barry;
-ArrayList<Boid> boids;
-ArrayList<Obstacle> avoids;
-
+private Environment environment;
 private BoidDrawer boidDrawer = new BoidDrawer();
 private ObstacleDrawer obstacleDrawer = new ObstacleDrawer();
 
-float globalScale = .91;
-float eraseRadius = 20;
-String tool = "boids";
+private float globalScale = .91f;
+private float eraseRadius = 20f;
+private String tool = "boids";
 
-// boid control
-float maxSpeed;
-float friendRadius;
-float crowdRadius;
-float avoidRadius;
-float coheseRadius;
+private float maxSpeed;
+private float friendRadius;
+private float crowdRadius;
+private float avoidRadius;
+private float coheseRadius;
 
-boolean option_friend = true;
-boolean option_crowd = true;
-boolean option_avoid = true;
-boolean option_noise = true;
-boolean option_cohese = true;
+private boolean option_friend = true;
+private boolean option_crowd = true;
+private boolean option_avoid = true;
+private boolean option_noise = true;
+private boolean option_cohese = true;
 
-// gui crap
-int messageTimer = 0;
-String messageText = "";
+private int messageTimer = 0;
+private String messageText = "";
 
 void setup () {
-  size(1024, 576);
-  textSize(16);
+  fullScreen();
+  textSize(16f);
+  initEnvironment();
   recalculateConstants();
-  boids = new ArrayList<Boid>();
-  avoids = new ArrayList<Obstacle>();
-  for (int x = 100; x < width - 100; x+= 100) {
-    for (int y = 100; y < height - 100; y+= 100) {
-         boids.add(new Boid(x + random(3), y + random(3)));
-          boids.add(new Boid(x + random(3), y + random(3)));
-    }
-  }
-
-  setupWalls();
 }
-
-// haha
-void recalculateConstants () {
-  maxSpeed = 2.1 * globalScale;
-  friendRadius = 60 * globalScale;
-  crowdRadius = (friendRadius / 1.3);
-  avoidRadius = 90 * globalScale;
-  coheseRadius = friendRadius;
-}
-
-
-void setupWalls() {
-  avoids = new ArrayList<Obstacle>();
-  for (int x = 0; x < width; x+= 20) {
-    final PVector upperObstaclePosition = new PVector(x, 10f);
-    avoids.add(new Obstacle(upperObstaclePosition));
-    final PVector lowerObstaclePosition = new PVector(x, height - 10f);
-    avoids.add(new Obstacle(lowerObstaclePosition));
-  }
-}
-
-void setupCircle() {
-  avoids = new ArrayList<Obstacle>();
-  for (int x = 0; x < 50; x+= 1) {
-    float dir = (x / 50.0) * TWO_PI;
-    final PVector obstaclePosition = new PVector(
-      width * 0.5f + cos(dir) * height * 0.4f, 
-      height * 0.5f + sin(dir) * height * 0.4f
-      ); 
-    avoids.add(new Obstacle(obstaclePosition));
-  }
-}
-
 
 void draw () {
   noStroke();
   colorMode(HSB);
-  fill(0, 100);
+  //fill(0, 100);
   rect(0, 0, width, height);
 
 
@@ -99,7 +52,7 @@ void draw () {
     boidDrawer.drawBoid(currentBoid);
   }
 
-  for (final Obstacle currentObstacle : avoids) {
+  for (final Obstacle currentObstacle : obstacles) {
     obstacleDrawer.drawObstacle(currentObstacle);
   }
 
@@ -141,19 +94,45 @@ void keyPressed () {
     option_noise = option_noise ? false : true;
     message("Turned noise " + on(option_noise));
   } else if (key == ',') {
-    setupWalls();
+    environment.setupWalls();
   } else if (key == '.') {
-    setupCircle();
+    environment.setupCircle();
   }
   recalculateConstants();
 }
 
-void drawGUI() {
-  if (messageTimer > 0) {
-    fill((min(30, messageTimer) / 30.0) * 255.0);
-
-    text(messageText, 10, height - 20);
+void mousePressed () {
+  final PVector mousePosition = new PVector(mouseX, mouseY);
+  switch (tool) {
+  case "boids":
+    //boids.add(new Boid(mouseX, mouseY));
+    //message(boids.size() + " Total Boid" + s(boids.size()));
+    break;
+  case "avoids":
+    //obstacles.add(new Obstacle(mousePosition));
+    break;
   }
+}
+
+private void initEnvironment() {
+  environment = new Environment();
+}
+
+private void recalculateConstants () {
+  maxSpeed = 2.1f * globalScale;
+  friendRadius = 60f * globalScale;
+  crowdRadius = (friendRadius / 1.3f);
+  avoidRadius = 90f * globalScale;
+  coheseRadius = friendRadius;
+}
+
+private void drawGUI() {
+  if (messageTimer <= 0) {
+    return;
+  }
+  
+  fill((min(30f, messageTimer) / 30f) * 255f);
+  text(messageText, 10f, height - 20f);
 }
 
 String s(int count) {
@@ -164,18 +143,7 @@ String on(boolean in) {
   return in ? "on" : "off";
 }
 
-void mousePressed () {
-  final PVector mousePosition = new PVector(mouseX, mouseY);
-  switch (tool) {
-  case "boids":
-    boids.add(new Boid(mouseX, mouseY));
-    message(boids.size() + " Total Boid" + s(boids.size()));
-    break;
-  case "avoids":
-    avoids.add(new Obstacle(mousePosition));
-    break;
-  }
-}
+
 
 void erase () {
   for (int i = boids.size()-1; i > -1; i--) {
@@ -185,10 +153,10 @@ void erase () {
     }
   }
 
-  for (int i = avoids.size()-1; i > -1; i--) {
-    Obstacle b = avoids.get(i);
+  for (int i = obstacles.size()-1; i > -1; i--) {
+    Obstacle b = obstacles.get(i);
     if (abs(b.getX() - mouseX) < eraseRadius && abs(b.getY() - mouseY) < eraseRadius) {
-      avoids.remove(i);
+      obstacles.remove(i);
     }
   }
 }
