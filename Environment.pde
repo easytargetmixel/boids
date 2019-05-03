@@ -1,26 +1,32 @@
 class Environment {
+  private int numOfInitialBoids = 2048;
   private ArrayList<Boid> boids;
   private ArrayList<Obstacle> obstacles;
 
   Environment() {
     boids = new ArrayList<Boid>();
-    for (int x = 100; x < width - 100; x+= 100) {
-      for (int y = 100; y < height - 100; y+= 100) {
-        boids.add(new Boid(x + random(3), y + random(3)));
-        boids.add(new Boid(x + random(3), y + random(3)));
-      }
+    //for (int x = 100; x < width - 100; x+= 50) {
+    //  for (int y = 100; y < height - 100; y+= 50) {
+    //    boids.add(new Boid(x + random(3), y + random(3)));
+    //    boids.add(new Boid(x + random(3), y + random(3)));
+    //  }
+    //}
+
+    for (int i = 0; i < numOfInitialBoids; i++) {
+      final Boid randomBoid = new Boid(random(width), random(height));
+      boids.add(randomBoid);
     }
     setupWalls();
   }
 
   void setupWalls() {
     obstacles = new ArrayList<Obstacle>();
-    for (int x = 0; x < width; x+= 20) {
-      final PVector upperObstaclePosition = new PVector(x, 10f);
-      obstacles.add(new Obstacle(upperObstaclePosition));
-      final PVector lowerObstaclePosition = new PVector(x, height - 10f);
-      obstacles.add(new Obstacle(lowerObstaclePosition));
-    }
+    //for (int x = 0; x < width; x+= 20) {
+    //  final PVector upperObstaclePosition = new PVector(x, 10f);
+    //  obstacles.add(new Obstacle(upperObstaclePosition));
+    //  final PVector lowerObstaclePosition = new PVector(x, height - 10f);
+    //  obstacles.add(new Obstacle(lowerObstaclePosition));
+    //}
   }
 
   void setupCircle() {

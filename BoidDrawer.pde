@@ -1,6 +1,6 @@
 class BoidDrawer {
 
-  private boolean drawLinesToFriends = true;
+  private boolean drawLinesToFriends = false;
   private color friendLineColor = 0x10FFFFFF;
 
   void drawBoid(final Boid boid) {

@@ -3,6 +3,8 @@ private BoidDrawer boidDrawer = new BoidDrawer();
 private ObstacleDrawer obstacleDrawer = new ObstacleDrawer();
 private MessageDisplay messageDisplay = new MessageDisplay();
 
+private color screenClearFadeColor = 0x04FF1188;
+
 private float globalScale = .91f;
 private float eraseRadius = 20f;
 private String tool = "boids";
@@ -24,15 +26,15 @@ void setup () {
   textSize(16f);
   initEnvironment();
   recalculateConstants();
+  clearScreen();
 }
 
 void draw () {
   noStroke();
   colorMode(HSB);
-  //fill(0, 100);
-  rect(0, 0, width, height);
 
-
+  clearScreen();
+  
   if (tool == "erase") {
     noFill();
     stroke(0, 100, 260);
@@ -104,6 +106,11 @@ void mousePressed () {
 
 private void initEnvironment() {
   environment = new Environment();
+}
+
+private void clearScreen() {
+  fill(screenClearFadeColor);
+  rect(0, 0, width, height);
 }
 
 private void recalculateConstants () {
