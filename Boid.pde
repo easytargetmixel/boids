@@ -91,7 +91,7 @@ class Boid {
 
   private void updateFriends(final ArrayList<Boid> allBoids, final float friendRadius) {
     final ArrayList<Boid> nearby = new ArrayList<Boid>();
-    float total = 0f;
+    float shadeSum = 0f;
     int friendCounter = 0;
 
     for (final Boid test : allBoids) {
@@ -104,11 +104,11 @@ class Boid {
         nearby.add(test);
 
         if (test.shade - shade < -128f) {
-          total += test.shade + 255f - shade;
+          shadeSum += test.shade + 255f - shade;
         } else if (test.shade - shade > 128f) {
-          total += test.shade - 255f - shade;
+          shadeSum += test.shade - 255f - shade;
         } else {
-          total += test.shade - shade;
+          shadeSum += test.shade - shade;
         }
         friendCounter++;
       }
@@ -117,7 +117,7 @@ class Boid {
     if (friendCounter == 0) {
       averageColor = 0f;
     } else {
-      averageColor = total / (float) friendCounter;
+      averageColor = shadeSum / (float) friendCounter;
     }
     friends = nearby;
   }
