@@ -1,10 +1,10 @@
 private Environment environment;
-private ScreenClearer screenClearer = new ScreenClearer(0xFFFF1188, 10);
-private BoidDrawer boidDrawer = new BoidDrawer();
-private ObstacleDrawer obstacleDrawer = new ObstacleDrawer();
-private MessageDisplay messageDisplay = new MessageDisplay();
-private Tool tool = new Tool(ToolMode.ADD_BOIDS);
-private InputHandler inputHandler = new InputHandler();
+private final ScreenClearer screenClearer = new ScreenClearer(0xFFFF1188, 10);
+private final BoidDrawer boidDrawer = new BoidDrawer();
+private final ObstacleDrawer obstacleDrawer = new ObstacleDrawer();
+private final MessageDisplay messageDisplay = new MessageDisplay();
+private final Tool tool = new Tool(ToolMode.ADD_BOIDS);
+private final InputHandler inputHandler = new InputHandler();
 
 void setup () {
   fullScreen();
