@@ -61,35 +61,28 @@ class Boid {
     final float avoidRadius, 
     final float coheseRadius
     ) {
+
     final PVector allign = getAverageDir(friendRadius, crowdRadius);
-    final PVector avoidObjects = getObstacleAvoidance(obstacles, avoidRadius);
-    final PVector noise = new PVector(random(2f) - 1f, random(2f) -1f);
-    final PVector cohese = getCohesion(coheseRadius);
-
     allign.mult(1);
-    //if (!option_friend) allign.mult(0);
-
-    avoidObjects.mult(3);
-    //if (!option_avoid) avoidObjects.mult(0);
-
-    noise.mult(0.1);
-    //if (!option_noise) noise.mult(0);
-
-    cohese.mult(1);
-    //if (!option_cohese) cohese.mult(0);
-
-    stroke(0, 255, 160);
-
     move.add(allign);
+
+    final PVector avoidObjects = getObstacleAvoidance(obstacles, avoidRadius);
+    avoidObjects.mult(3);
     move.add(avoidObjects);
+
+    final PVector noise = new PVector(random(2f) - 1f, random(2f) -1f);
+    noise.mult(0.1f);
     move.add(noise);
+
+    final PVector cohese = getCohesion(coheseRadius);
+    cohese.mult(1f);
     move.add(cohese);
 
     move.limit(maxSpeed);
 
-    shade += getAverageColor() * 0.03;
-    shade += (random(2) - 1) ;
-    shade = (shade + 255) % 255; //max(0, min(255, shade));
+    shade += getAverageColor() * 0.03f;
+    shade += (random(2f) - 1f) ;
+    shade = (shade + 255f) % 255f; //max(0, min(255, shade));
   }
 
   private void updateFriends(final ArrayList<Boid> allBoids, final float friendRadius) {
@@ -132,8 +125,8 @@ class Boid {
 
     for (Boid other : friends) {
       float d = PVector.dist(pos, other.pos);
-      // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
-      if ((d > 0) && (d < friendRadius)) {
+
+      if ((d > 0f) && (d < friendRadius)) {
         PVector copy = other.move.copy();
         copy.normalize();
         copy.div(d); 
@@ -141,8 +134,7 @@ class Boid {
         count++;
       }
 
-      if ((d > 0) && (d < crowdRadius)) {
-        // Calculate vector pointing away from neighbor
+      if ((d > 0f) && (d < crowdRadius)) {
         PVector diff = PVector.sub(pos, other.pos);
         diff.normalize();
         diff.div(d);        // Weight by distance
