@@ -1,5 +1,7 @@
 private Environment environment;
-private final ScreenClearer screenClearer = new ScreenClearer(0xFFFF1188, 10);
+private final color initialBackgroundColor = 0xFFFF1188;
+private final int screenClearerAlpha = 6;
+private final ScreenClearer screenClearer = new ScreenClearer(initialBackgroundColor, screenClearerAlpha);
 private final BoidDrawer boidDrawer = new BoidDrawer();
 private final ObstacleDrawer obstacleDrawer = new ObstacleDrawer();
 private final MessageDisplay messageDisplay = new MessageDisplay();

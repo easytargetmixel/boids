@@ -3,8 +3,8 @@ class BoidDrawer {
   private boolean drawLinesToFriends = false;
   private color friendLineColor = 0x10FFFFFF;
 
-  float saturation = 90f;
-  float brightness = 200f;
+  float saturation = 150f;
+  float brightness = 230f;
   float sizeFactor = 30f;
 
   void drawBoid(final Boid boid, final float globalScale) {
