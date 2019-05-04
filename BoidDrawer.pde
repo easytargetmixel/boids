@@ -12,20 +12,19 @@ class BoidDrawer {
       drawLinesToFriends(boid);
     }
 
-    noStroke();
     fill(boid.getShade(), saturation, brightness);
 
-    //ellipse(boid.getX(), boid.getY(), sizeFactor * globalScale, sizeFactor * globalScale);
-
-    pushMatrix();
-    translate(boid.getX(), boid.getY());
-    rotate(boid.getHeading());
-    beginShape();
-    vertex(15f * globalScale, 0);
-    vertex(-7f * globalScale, 7f * globalScale);
-    vertex(-7f * globalScale, -7f * globalScale);
-    endShape(CLOSE);
-    popMatrix();
+    ellipse(boid.getX(), boid.getY(), sizeFactor * globalScale, sizeFactor * globalScale);
+    
+    //pushMatrix();
+    //translate(boid.getX(), boid.getY());
+    //rotate(boid.getHeading());
+    //beginShape();
+    //vertex(15f * globalScale, 0);
+    //vertex(-7f * globalScale, 7f * globalScale);
+    //vertex(-7f * globalScale, -7f * globalScale);
+    //endShape(CLOSE);
+    //popMatrix();
   }
 
   void drawLinesToFriends(final Boid boid) {

@@ -1,5 +1,5 @@
 class Environment {
-  private int numOfInitialBoids = 4000;
+  private int numOfInitialBoids = 2048;
   private ArrayList<Boid> boids;
   private ArrayList<Obstacle> obstacles;
   private float globalScale = .91f;
@@ -80,6 +80,8 @@ class Environment {
         avoidRadius, 
         coheseRadius
         );
+
+      noStroke();
       boidDrawer.drawBoid(currentBoid, globalScale);
     }
   }

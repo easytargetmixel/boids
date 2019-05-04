@@ -5,6 +5,7 @@ class Boid {
   private float shade = random(255f);
   private ArrayList<Boid> friends = new ArrayList<Boid>();
   private int thinkTimer = int(random(10));
+  private float noiseFactor = 0.1f;
 
   Boid (final float x, final float y) {
     pos = new PVector(x, y);
@@ -75,7 +76,7 @@ class Boid {
     velocity.add(avoidObjects);
 
     final PVector noise = new PVector(random(2f) - 1f, random(2f) -1f);
-    noise.mult(0.1f);
+    noise.mult(noiseFactor);
     velocity.add(noise);
 
     velocity.limit(maxSpeed);
@@ -134,10 +135,9 @@ class Boid {
       final float distance = PVector.dist(pos, friend.pos);
 
       if ((distance > 0f) && (distance < friendRadius)) {
-        PVector copy = friend.velocity.copy();
-        copy.normalize();
-        copy.div(distance); 
-        sum.add(copy);
+        final PVector friendVelocity = friend.velocity.copy();
+        friendVelocity.normalize().div(distance); 
+        sum.add(friendVelocity);
       }
 
       if ((distance > 0f) && (distance < crowdRadius)) {
