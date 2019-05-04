@@ -18,7 +18,7 @@ void draw () {
   screenClearer.perform();
   tool.draw_();
 
-  environment.updateAndDraw();
+  environment.updateAndDrawBoids();
   messageDisplay.draw_();
 }
 

@@ -1,5 +1,5 @@
 class Environment {
-  private int numOfInitialBoids = 6000;
+  private int numOfInitialBoids = 4000;
   private ArrayList<Boid> boids;
   private ArrayList<Obstacle> obstacles;
   private float globalScale = .91f;
@@ -21,18 +21,18 @@ class Environment {
       final Boid randomBoid = new Boid(random(width), random(height));
       boids.add(randomBoid);
     }
-    setupWalls();
+    setupCircle();
     recalculateConstants();
   }
 
   void setupWalls() {
     obstacles = new ArrayList<Obstacle>();
-    //for (int x = 0; x < width; x+= 20) {
-    //  final PVector upperObstaclePosition = new PVector(x, 10f);
-    //  obstacles.add(new Obstacle(upperObstaclePosition));
-    //  final PVector lowerObstaclePosition = new PVector(x, height - 10f);
-    //  obstacles.add(new Obstacle(lowerObstaclePosition));
-    //}
+    for (int x = 0; x < width; x+= 20) {
+      final PVector upperObstaclePosition = new PVector(x, 10f);
+      obstacles.add(new Obstacle(upperObstaclePosition));
+      final PVector lowerObstaclePosition = new PVector(x, height - 10f);
+      obstacles.add(new Obstacle(lowerObstaclePosition));
+    }
   }
 
   void setupCircle() {
@@ -69,7 +69,7 @@ class Environment {
     coheseRadius = friendRadius;
   }
 
-  void updateAndDraw() {
+  void updateAndDrawBoids() {
     for (final Boid currentBoid : boids) {
       currentBoid.go(
         boids, 
@@ -82,7 +82,9 @@ class Environment {
         );
       boidDrawer.drawBoid(currentBoid, globalScale);
     }
+  }
 
+  void drawObstacles() {
     for (final Obstacle currentObstacle : obstacles) {
       obstacleDrawer.drawObstacle(currentObstacle);
     }

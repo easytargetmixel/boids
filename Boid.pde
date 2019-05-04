@@ -62,7 +62,7 @@ class Boid {
     final float coheseRadius
     ) {
     final PVector allign = getAverageDir(friendRadius, crowdRadius);
-    final PVector avoidObjects = getAvoidAvoids(obstacles, avoidRadius);
+    final PVector avoidObjects = getObstacleAvoidance(obstacles, avoidRadius);
     final PVector noise = new PVector(random(2f) - 1f, random(2f) -1f);
     final PVector cohese = getCohesion(coheseRadius);
 
@@ -157,42 +157,18 @@ class Boid {
     return sum;
   }
 
-  //private PVector getAvoidDir() {
-  //PVector steer = new PVector(0, 0);
-  //int count = 0;
+  private PVector getObstacleAvoidance(final ArrayList<Obstacle> obstacles, final float avoidRadius) {
+    final PVector steer = new PVector(0f, 0f);
 
-  //for (Boid other : friends) {
-  //  float d = PVector.dist(pos, other.pos);
-  //  // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
-  //  if ((d > 0) && (d < crowdRadius)) {
-  //    // Calculate vector pointing away from neighbor
-  //    PVector diff = PVector.sub(pos, other.pos);
-  //    diff.normalize();
-  //    diff.div(d);        // Weight by distance
-  //    steer.add(diff);
-  //    count++;            // Keep track of how many
-  //  }
-  //}
-  //if (count > 0) {
-  //  //steer.div((float) count);
-  //}
-  //  return steer;
-  //}
-
-  private PVector getAvoidAvoids(final ArrayList<Obstacle> obstacles, final float avoidRadius) {
-    PVector steer = new PVector(0, 0);
-    int count = 0;
-
-    for (Obstacle other : obstacles) {
-      float d = PVector.dist(pos, other.getPosition());
+    for (final Obstacle obstacle : obstacles) {
+      float d = PVector.dist(pos, obstacle.getPosition());
       // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
       if ((d > 0) && (d < avoidRadius)) {
         // Calculate vector pointing away from neighbor
-        PVector diff = PVector.sub(pos, other.getPosition());
+        PVector diff = PVector.sub(pos, obstacle.getPosition());
         diff.normalize();
         diff.div(d);        // Weight by distance
         steer.add(diff);
-        count++;            // Keep track of how many
       }
     }
     return steer;
