@@ -71,7 +71,7 @@ class Environment {
 
   void updateAndDrawBoids() {
     for (final Boid currentBoid : boids) {
-      currentBoid.go(
+      currentBoid.update(
         boids, 
         obstacles, 
         maxSpeed, 
