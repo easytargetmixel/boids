@@ -3,12 +3,13 @@ class MessageDisplay {
   private int maxMessageTimerSeconds = 3;
   private int messageTimer = 0;
   private String messageText = "";
+  private float textSize = 16f;
 
   void showMessage(final String messageText) {
     this.messageText = messageText;
     messageTimer = (int) frameRate * maxMessageTimerSeconds;
   }
-  
+
   void showMessage(final String prefixText, final boolean onOffValue) {
     showMessage(prefixText + on(onOffValue));
   }
@@ -19,6 +20,7 @@ class MessageDisplay {
     }
 
     fill((min(30f, messageTimer) / 30f) * 255f);
+    textSize(textSize);
     text(messageText, 10f, height - 20f);
   }
 

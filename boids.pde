@@ -9,8 +9,7 @@ private final Tool tool = new Tool(ToolMode.ADD_BOIDS);
 private final InputHandler inputHandler = new InputHandler();
 
 void setup () {
-  fullScreen();
-  textSize(16f);
+  fullScreen(2);
   colorMode(HSB);
 
   initEnvironment();
