@@ -2,6 +2,17 @@ class Environment {
   private int numOfInitialBoids = 2048;
   private ArrayList<Boid> boids;
   private ArrayList<Obstacle> obstacles;
+  private float globalScale = .91f;
+  private float maxSpeed;
+  private float friendRadius;
+  private float crowdRadius;
+  private float avoidRadius;
+  private float coheseRadius;
+  private boolean option_friend = true;
+  private boolean option_crowd = true;
+  private boolean option_avoid = true;
+  private boolean option_noise = true;
+  private boolean option_cohese = true;
 
   Environment() {
     boids = new ArrayList<Boid>();
@@ -17,6 +28,7 @@ class Environment {
       boids.add(randomBoid);
     }
     setupWalls();
+    recalculateConstants();
   }
 
   void setupWalls() {
@@ -41,10 +53,40 @@ class Environment {
     }
   }
 
+  void decreaseGlobalScale(final MessageDisplay messageDisplay) {
+    setGlobalScale(globalScale * 0.8f, messageDisplay);
+  }
+
+  void increaseGlobalScale(final MessageDisplay messageDisplay) {
+    setGlobalScale(globalScale / 0.8f, messageDisplay);
+  }
+
+  void setGlobalScale(final float globalScale, final MessageDisplay messageDisplay) {
+    this.globalScale = globalScale;
+    messageDisplay.showMessage("Global Scale: " + globalScale);
+    recalculateConstants();
+  }
+
+  private void recalculateConstants () {
+    maxSpeed = 2.1f * globalScale;
+    friendRadius = 60f * globalScale;
+    crowdRadius = (friendRadius / 1.3f);
+    avoidRadius = 90f * globalScale;
+    coheseRadius = friendRadius;
+  }
+
   void updateAndDraw() {
     for (final Boid currentBoid : boids) {
-      currentBoid.go(boids, obstacles);
-      boidDrawer.drawBoid(currentBoid);
+      currentBoid.go(
+        boids, 
+        obstacles, 
+        maxSpeed, 
+        friendRadius, 
+        crowdRadius, 
+        avoidRadius, 
+        coheseRadius
+        );
+      boidDrawer.drawBoid(currentBoid, globalScale);
     }
 
     for (final Obstacle currentObstacle : obstacles) {

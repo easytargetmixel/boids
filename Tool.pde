@@ -1,9 +1,26 @@
 class Tool {
 
-  ToolMode mode;
+  private ToolMode mode;
+  float eraseRadius = 20f;
 
   Tool(final ToolMode mode) {
     this.mode = mode;
+  }
+
+  void setMode(final ToolMode mode, final MessageDisplay messageDisplay) {
+    this.mode = mode;
+    switch (mode) {
+    case ERASE:
+      messageDisplay.showMessage("Eraser");
+      break;
+
+    case ADD_BOIDS:
+      messageDisplay.showMessage("Place Boids");
+      break;
+
+    case ADD_OBSTACLES:
+      messageDisplay.showMessage("Place Obstacles");
+    }
   }
 
   void draw_() {

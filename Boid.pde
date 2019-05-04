@@ -34,22 +34,37 @@ class Boid {
     return friends;
   }
 
-  void go(final ArrayList<Boid> allBoids, final ArrayList<Obstacle> obstacles) {
+  void go(
+    final ArrayList<Boid> allBoids, 
+    final ArrayList<Obstacle> obstacles, 
+    final float maxSpeed, 
+    final float friendRadius, 
+    final float crowdRadius, 
+    final float avoidRadius, 
+    final float coheseRadius
+    ) {
     increment();
     wrap();
 
     if (thinkTimer ==0 ) {
-      updateFriends(allBoids);
+      updateFriends(allBoids, friendRadius);
     }
-    flock(obstacles);
+    flock(obstacles, maxSpeed, friendRadius, crowdRadius, avoidRadius, coheseRadius);
     pos.add(move);
   }
 
-  void flock(final ArrayList<Obstacle> obstacles) {
-    PVector allign = getAverageDir();
-    PVector avoidObjects = getAvoidAvoids(obstacles);
-    PVector noise = new PVector(random(2) - 1, random(2) -1);
-    PVector cohese = getCohesion();
+  void flock(
+    final ArrayList<Obstacle> obstacles, 
+    final float maxSpeed, 
+    final float friendRadius, 
+    final float crowdRadius, 
+    final float avoidRadius, 
+    final float coheseRadius
+    ) {
+    final PVector allign = getAverageDir(friendRadius, crowdRadius);
+    final PVector avoidObjects = getAvoidAvoids(obstacles, avoidRadius);
+    final PVector noise = new PVector(random(2f) - 1f, random(2f) -1f);
+    final PVector cohese = getCohesion(coheseRadius);
 
     allign.mult(1);
     //if (!option_friend) allign.mult(0);
@@ -77,7 +92,7 @@ class Boid {
     shade = (shade + 255) % 255; //max(0, min(255, shade));
   }
 
-  void updateFriends(final ArrayList<Boid> allBoids) {
+  private void updateFriends(final ArrayList<Boid> allBoids, final float friendRadius) {
     final ArrayList<Boid> nearby = new ArrayList<Boid>();
     for (final Boid test : allBoids) {
       if (test == this) {
@@ -93,7 +108,7 @@ class Boid {
     friends = nearby;
   }
 
-  float getAverageColor () {
+  private float getAverageColor () {
     float total = 0;
     float count = 0;
     for (Boid other : friends) {
@@ -106,12 +121,12 @@ class Boid {
       }
       count++;
     }
-    
+
     if (count == 0) return 0;
     return total / (float) count;
   }
 
-  PVector getAverageDir () {
+  private PVector getAverageDir(final float friendRadius, final float crowdRadius) {
     PVector sum = new PVector(0, 0);
     int count = 0;
 
@@ -143,28 +158,28 @@ class Boid {
   }
 
   //private PVector getAvoidDir() {
-    //PVector steer = new PVector(0, 0);
-    //int count = 0;
+  //PVector steer = new PVector(0, 0);
+  //int count = 0;
 
-    //for (Boid other : friends) {
-    //  float d = PVector.dist(pos, other.pos);
-    //  // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
-    //  if ((d > 0) && (d < crowdRadius)) {
-    //    // Calculate vector pointing away from neighbor
-    //    PVector diff = PVector.sub(pos, other.pos);
-    //    diff.normalize();
-    //    diff.div(d);        // Weight by distance
-    //    steer.add(diff);
-    //    count++;            // Keep track of how many
-    //  }
-    //}
-    //if (count > 0) {
-    //  //steer.div((float) count);
-    //}
+  //for (Boid other : friends) {
+  //  float d = PVector.dist(pos, other.pos);
+  //  // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
+  //  if ((d > 0) && (d < crowdRadius)) {
+  //    // Calculate vector pointing away from neighbor
+  //    PVector diff = PVector.sub(pos, other.pos);
+  //    diff.normalize();
+  //    diff.div(d);        // Weight by distance
+  //    steer.add(diff);
+  //    count++;            // Keep track of how many
+  //  }
+  //}
+  //if (count > 0) {
+  //  //steer.div((float) count);
+  //}
   //  return steer;
   //}
 
-  private PVector getAvoidAvoids(final ArrayList<Obstacle> obstacles) {
+  private PVector getAvoidAvoids(final ArrayList<Obstacle> obstacles, final float avoidRadius) {
     PVector steer = new PVector(0, 0);
     int count = 0;
 
@@ -183,7 +198,7 @@ class Boid {
     return steer;
   }
 
-  private PVector getCohesion () {
+  private PVector getCohesion(final float coheseRadius) {
     //float neighbordist = 50;
     PVector sum = new PVector(0, 0);   // Start with empty vector to accumulate all locations
     int count = 0;
