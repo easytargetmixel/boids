@@ -128,11 +128,9 @@ class Boid {
     ) {
     final PVector sum = new PVector(0f, 0f);
     PVector cohesionSum = new PVector(0f, 0f);
-
     int cohesionCount = 0;
 
     for (final Boid friend : friends) {
-
       final float distance = PVector.dist(pos, friend.pos);
 
       if ((distance > 0f) && (distance < friendRadius)) {

@@ -36,6 +36,9 @@ class Tool {
       fill(0, 200, 200);
       ellipse(mouseX, mouseY, 15, 15);
       break;
+
+    default:
+      break;
     }
   }
 
