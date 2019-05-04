@@ -168,7 +168,7 @@ class Boid {
     final ArrayList<Obstacle> obstacles, 
     final float avoidRadius
     ) {
-    final PVector steer = new PVector(0f, 0f);
+    final PVector influence = new PVector(0f, 0f);
 
     for (final Obstacle obstacle : obstacles) {
       final float distance = PVector.dist(pos, obstacle.getPosition());
@@ -176,10 +176,10 @@ class Boid {
         final PVector diff = PVector.sub(pos, obstacle.getPosition());
         diff.normalize();
         diff.div(distance);
-        steer.add(diff);
+        influence.add(diff);
       }
     }
-    return steer;
+    return influence;
   }
 
   private void incrementThinkTimer() {
