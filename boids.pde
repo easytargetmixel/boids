@@ -6,7 +6,7 @@ private MessageDisplay messageDisplay = new MessageDisplay();
 
 private float globalScale = .91f;
 private float eraseRadius = 20f;
-private String tool = "boids";
+private Tool tool = new Tool(ToolMode.ADD_BOIDS);
 
 private float maxSpeed;
 private float friendRadius;
@@ -23,29 +23,16 @@ private boolean option_cohese = true;
 void setup () {
   fullScreen();
   textSize(16f);
+  colorMode(HSB);
+
   initEnvironment();
   recalculateConstants();
   screenClearer.perform();
 }
 
 void draw () {
-  noStroke();
-  colorMode(HSB);
-
   screenClearer.perform();
-  
-  if (tool == "erase") {
-    noFill();
-    stroke(0, 100, 260);
-    rect(mouseX - eraseRadius, mouseY - eraseRadius, eraseRadius * 2, eraseRadius *2);
-    if (mousePressed) {
-      erase();
-    }
-  } else if (tool == "avoids") {
-    noStroke();
-    fill(0, 200, 200);
-    ellipse(mouseX, mouseY, 15, 15);
-  }
+  tool.draw_();
 
   environment.updateAndDraw();
   messageDisplay.draw_();
@@ -53,13 +40,13 @@ void draw () {
 
 void keyPressed () {
   if (key == 'q') {
-    tool = "boids";
+    tool.mode = ToolMode.ADD_BOIDS;
     message("Add boids");
   } else if (key == 'w') {
-    tool = "avoids";
+    tool.mode = ToolMode.ADD_OBSTACLES;
     message("Place obstacles");
   } else if (key == 'e') {
-    tool = "erase";
+    tool.mode = ToolMode.ERASE;
     message("Eraser");
   } else if (key == '-') {
     message("Decreased scale");
@@ -90,17 +77,9 @@ void keyPressed () {
   recalculateConstants();
 }
 
-void mousePressed () {
+void mousePressed() {
   final PVector mousePosition = new PVector(mouseX, mouseY);
-  switch (tool) {
-  case "boids":
-    //boids.add(new Boid(mouseX, mouseY));
-    //message(boids.size() + " Total Boid" + s(boids.size()));
-    break;
-  case "avoids":
-    //obstacles.add(new Obstacle(mousePosition));
-    break;
-  }
+  tool.perform(mousePosition);
 }
 
 private void initEnvironment() {
@@ -115,21 +94,6 @@ private void recalculateConstants () {
   coheseRadius = friendRadius;
 }
 
-void erase () {
-  //for (int i = boids.size()-1; i > -1; i--) {
-  //  Boid b = boids.get(i);
-  //  if (abs(b.pos.x - mouseX) < eraseRadius && abs(b.pos.y - mouseY) < eraseRadius) {
-  //    boids.remove(i);
-  //  }
-  //}
-
-  //for (int i = obstacles.size()-1; i > -1; i--) {
-  //  Obstacle b = obstacles.get(i);
-  //  if (abs(b.getX() - mouseX) < eraseRadius && abs(b.getY() - mouseY) < eraseRadius) {
-  //    obstacles.remove(i);
-  //  }
-  //}
-}
 
 private void message(final String messageText) {
   messageDisplay.showMessage(messageText);
