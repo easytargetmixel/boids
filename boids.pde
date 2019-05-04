@@ -1,5 +1,5 @@
 private Environment environment;
-private ScreenClearer screenClearer = new ScreenClearer(0xFFFF1188, 20);
+private ScreenClearer screenClearer = new ScreenClearer(0xFFFF1188, 10);
 private BoidDrawer boidDrawer = new BoidDrawer();
 private ObstacleDrawer obstacleDrawer = new ObstacleDrawer();
 private MessageDisplay messageDisplay = new MessageDisplay();

@@ -1,5 +1,5 @@
 class Environment {
-  private int numOfInitialBoids = 2048;
+  private int numOfInitialBoids = 6000;
   private ArrayList<Boid> boids;
   private ArrayList<Obstacle> obstacles;
   private float globalScale = .91f;
@@ -16,12 +16,6 @@ class Environment {
 
   Environment() {
     boids = new ArrayList<Boid>();
-    //for (int x = 100; x < width - 100; x+= 50) {
-    //  for (int y = 100; y < height - 100; y+= 50) {
-    //    boids.add(new Boid(x + random(3), y + random(3)));
-    //    boids.add(new Boid(x + random(3), y + random(3)));
-    //  }
-    //}
 
     for (int i = 0; i < numOfInitialBoids; i++) {
       final Boid randomBoid = new Boid(random(width), random(height));
