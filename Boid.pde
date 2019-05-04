@@ -1,7 +1,7 @@
 class Boid {
 
   private PVector pos;
-  private PVector move = new PVector(0f, 0f);
+  private PVector velocity = new PVector(0f, 0f);
   private float shade = random(255f);
   private ArrayList<Boid> friends = new ArrayList<Boid>();
   private int thinkTimer = int(random(10));
@@ -23,7 +23,7 @@ class Boid {
   }
 
   float getHeading() {
-    return move.heading();
+    return velocity.heading();
   }
 
   float getShade() {
@@ -46,11 +46,11 @@ class Boid {
     increment();
     wrap();
 
-    if (thinkTimer ==0 ) {
+    if (thinkTimer == 0) {
       updateFriends(allBoids, friendRadius);
     }
+
     flock(obstacles, maxSpeed, friendRadius, crowdRadius, avoidRadius, coheseRadius);
-    pos.add(move);
   }
 
   void flock(
@@ -62,27 +62,29 @@ class Boid {
     final float coheseRadius
     ) {
 
-    final PVector allign = getAverageDir(friendRadius, crowdRadius);
-    allign.mult(1);
-    move.add(allign);
+    final PVector friendVelocityInfluence = getVelocityInfluenceFromFriends(
+      friendRadius, 
+      crowdRadius, 
+      coheseRadius
+      );
+    friendVelocityInfluence.mult(1f);
+    velocity.add(friendVelocityInfluence);
 
     final PVector avoidObjects = getObstacleAvoidance(obstacles, avoidRadius);
-    avoidObjects.mult(3);
-    move.add(avoidObjects);
+    avoidObjects.mult(3f);
+    velocity.add(avoidObjects);
 
     final PVector noise = new PVector(random(2f) - 1f, random(2f) -1f);
     noise.mult(0.1f);
-    move.add(noise);
+    velocity.add(noise);
 
-    final PVector cohese = getCohesion(coheseRadius);
-    cohese.mult(1f);
-    move.add(cohese);
-
-    move.limit(maxSpeed);
+    velocity.limit(maxSpeed);
 
     shade += getAverageColor() * 0.03f;
     shade += (random(2f) - 1f) ;
     shade = (shade + 255f) % 255f; //max(0, min(255, shade));
+
+    pos.add(velocity);
   }
 
   private void updateFriends(final ArrayList<Boid> allBoids, final float friendRadius) {
@@ -119,33 +121,45 @@ class Boid {
     return total / (float) count;
   }
 
-  private PVector getAverageDir(final float friendRadius, final float crowdRadius) {
-    PVector sum = new PVector(0, 0);
+  private PVector getVelocityInfluenceFromFriends(
+    final float friendRadius, 
+    final float crowdRadius, 
+    final float coheseRadius
+    ) {
+    final PVector sum = new PVector(0f, 0f);
+    PVector cohesionSum = new PVector(0f, 0f);
+
     int count = 0;
 
     for (Boid other : friends) {
       float d = PVector.dist(pos, other.pos);
 
       if ((d > 0f) && (d < friendRadius)) {
-        PVector copy = other.move.copy();
+        PVector copy = other.velocity.copy();
         copy.normalize();
         copy.div(d); 
         sum.add(copy);
-        count++;
       }
 
       if ((d > 0f) && (d < crowdRadius)) {
         PVector diff = PVector.sub(pos, other.pos);
         diff.normalize();
-        diff.div(d);        // Weight by distance
+        diff.div(d);
         sum.add(diff);
-        count++;            // Keep track of how many
       }
 
-      if (count > 0) {
-        //sum.div((float)count);
+      if ((d > 0) && (d < coheseRadius)) {
+        cohesionSum.add(other.pos);
+        count++;
       }
     }
+
+    if (count > 0) {
+      cohesionSum.div(count);
+      cohesionSum = PVector.sub(cohesionSum, pos).setMag(0.05f).mult(1f);
+      sum.add(cohesionSum);
+    }
+
     return sum;
   }
 
@@ -153,9 +167,9 @@ class Boid {
     final PVector steer = new PVector(0f, 0f);
 
     for (final Obstacle obstacle : obstacles) {
-      float d = PVector.dist(pos, obstacle.getPosition());
+      final float d = PVector.dist(pos, obstacle.getPosition());
       // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
-      if ((d > 0) && (d < avoidRadius)) {
+      if ((d > 0f) && (d < avoidRadius)) {
         // Calculate vector pointing away from neighbor
         PVector diff = PVector.sub(pos, obstacle.getPosition());
         diff.normalize();
@@ -164,27 +178,6 @@ class Boid {
       }
     }
     return steer;
-  }
-
-  private PVector getCohesion(final float coheseRadius) {
-    //float neighbordist = 50;
-    PVector sum = new PVector(0, 0);   // Start with empty vector to accumulate all locations
-    int count = 0;
-    for (Boid other : friends) {
-      float d = PVector.dist(pos, other.pos);
-      if ((d > 0) && (d < coheseRadius)) {
-        sum.add(other.pos); // Add location
-        count++;
-      }
-    }
-    if (count > 0) {
-      sum.div(count);
-
-      PVector desired = PVector.sub(sum, pos);  
-      return desired.setMag(0.05);
-    } else {
-      return new PVector(0, 0);
-    }
   }
 
   // update all those timers!
