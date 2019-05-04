@@ -1,9 +1,8 @@
 private Environment environment;
+private ScreenClearer screenClearer = new ScreenClearer(0xFFFF1188, 20);
 private BoidDrawer boidDrawer = new BoidDrawer();
 private ObstacleDrawer obstacleDrawer = new ObstacleDrawer();
 private MessageDisplay messageDisplay = new MessageDisplay();
-
-private color screenClearFadeColor = 0x04FF1188;
 
 private float globalScale = .91f;
 private float eraseRadius = 20f;
@@ -26,14 +25,14 @@ void setup () {
   textSize(16f);
   initEnvironment();
   recalculateConstants();
-  clearScreen();
+  screenClearer.perform();
 }
 
 void draw () {
   noStroke();
   colorMode(HSB);
 
-  clearScreen();
+  screenClearer.perform();
   
   if (tool == "erase") {
     noFill();
@@ -106,11 +105,6 @@ void mousePressed () {
 
 private void initEnvironment() {
   environment = new Environment();
-}
-
-private void clearScreen() {
-  fill(screenClearFadeColor);
-  rect(0, 0, width, height);
 }
 
 private void recalculateConstants () {
