@@ -49,6 +49,6 @@ class InputHandler {
   }
 
   void onMouseClicked(final PVector position, final Tool tool) {
-    tool.perform(mousePosition);
+    tool.perform(position);
   }
 }

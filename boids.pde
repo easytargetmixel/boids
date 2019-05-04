@@ -18,7 +18,6 @@ void setup () {
 void draw () {
   screenClearer.perform();
   tool.draw_();
-
   environment.updateAndDrawBoids();
   messageDisplay.draw_();
 }
