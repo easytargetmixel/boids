@@ -5,8 +5,6 @@ class ObstacleDrawer {
   
   void drawObstacle(final Obstacle obstacle) {
      fill(color_);
-     //stroke(color_);
-     //noFill();
      ellipse(obstacle.getX(), obstacle.getY(), diameter, diameter);
   }
 }
