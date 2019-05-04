@@ -6,6 +6,7 @@ class Boid {
   private ArrayList<Boid> friends = new ArrayList<Boid>();
   private int thinkTimer = int(random(10));
   private float noiseFactor = 0.1f;
+  private float averageColor = 0f;
 
   Boid (final float x, final float y) {
     pos = new PVector(x, y);
@@ -81,15 +82,18 @@ class Boid {
 
     velocity.limit(maxSpeed);
 
-    shade += getAverageColor() * 0.03f;
+    shade += averageColor * 0.03f;
     shade += (random(2f) - 1f) ;
-    shade = (shade + 255f) % 255f; //max(0, min(255, shade));
+    shade = (shade + 255f) % 255f;
 
     pos.add(velocity);
   }
 
   private void updateFriends(final ArrayList<Boid> allBoids, final float friendRadius) {
     final ArrayList<Boid> nearby = new ArrayList<Boid>();
+    float total = 0f;
+    int friendCounter = 0;
+
     for (final Boid test : allBoids) {
       if (test == this) {
         continue;
@@ -98,29 +102,43 @@ class Boid {
       if (abs(test.pos.x - this.pos.x) < friendRadius &&
         abs(test.pos.y - this.pos.y) < friendRadius) {
         nearby.add(test);
+
+        if (test.shade - shade < -128f) {
+          total += test.shade + 255f - shade;
+        } else if (test.shade - shade > 128f) {
+          total += test.shade - 255f - shade;
+        } else {
+          total += test.shade - shade;
+        }
+        friendCounter++;
       }
     }
 
+    if (friendCounter == 0) {
+      averageColor = 0f;
+    } else {
+      averageColor = total / (float) friendCounter;
+    }
     friends = nearby;
   }
 
-  private float getAverageColor () {
-    float total = 0;
-    float count = 0;
-    for (Boid other : friends) {
-      if (other.shade - shade < -128) {
-        total += other.shade + 255 - shade;
-      } else if (other.shade - shade > 128) {
-        total += other.shade - 255 - shade;
-      } else {
-        total += other.shade - shade;
-      }
-      count++;
-    }
+  //private float getAverageColor () {
+  //  float total = 0;
+  //  float count = 0;
+  //  for (Boid other : friends) {
+  //    if (other.shade - shade < -128) {
+  //      total += other.shade + 255 - shade;
+  //    } else if (other.shade - shade > 128) {
+  //      total += other.shade - 255 - shade;
+  //    } else {
+  //      total += other.shade - shade;
+  //    }
+  //    count++;
+  //  }
 
-    if (count == 0) return 0;
-    return total / (float) count;
-  }
+  //  if (count == 0) return 0;
+  //  return total / (float) count;
+  //}
 
   private PVector getVelocityInfluenceFromFriends(
     final float friendRadius, 
