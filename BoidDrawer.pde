@@ -2,6 +2,9 @@ class BoidDrawer {
 
   private boolean drawLinesToFriends = false;
   private color friendLineColor = 0x10FFFFFF;
+  
+  float saturation = 90f;
+  float brightness = 200f;
 
   void drawBoid(final Boid boid, final float globalScale) {
     if (drawLinesToFriends) {
@@ -9,7 +12,8 @@ class BoidDrawer {
     }
 
     noStroke();
-    fill(boid.getShade(), 90f, 200f);
+    fill(boid.getShade(), saturation, brightness);
+    
     pushMatrix();
     translate(boid.getX(), boid.getY());
     rotate(boid.getHeading());
